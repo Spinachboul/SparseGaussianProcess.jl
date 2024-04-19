@@ -4,6 +4,8 @@ using Random
 
 abstract type AbstractSurrogateModel end
 
+export SGP
+
 mutable struct SGP <: AbstractSurrogateModel
     name::String
     Z::Union{Nothing, Matrix{Float64}}
@@ -20,7 +22,7 @@ mutable struct SGP <: AbstractSurrogateModel
     is_continuous::Bool
     _correlation_types::Dict{String,Function}
 
-    
+
     function SGP()
         name = "SparseGaussianProcess"
         Z = nothing
@@ -169,3 +171,5 @@ end
 end  # Module
   
 
+# Export functions for testing
+export SGP, set_inducing_inputs!, _new_train!, _reduced_likelihood, _reduced_likelihood_gradient, _reduced_likelihood_hessian, _compute_K, _fitc
