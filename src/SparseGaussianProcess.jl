@@ -2,9 +2,10 @@ module SparseGaussianProcess
 using LinearAlgebra
 using Random
 
+abstract type AbstractSurrogateModel end
 
 mutable struct SGP <: AbstractSurrogateModel
-    name: String
+    name::String
     Z::Union{Nothing, Matrix{Float64}}
     woodbury_data::Dict{String,Union{Nothing,Vector{Float64}, Matrix{Float64}}}
     optimal_par:: Dict{String, Union{Nothing, Vector{Float64}}}
@@ -19,6 +20,13 @@ mutable struct SGP <: AbstractSurrogateModel
     is_continuous::Bool
     _correlation_types::Dict{String, Function}
 
+    function square_exp(x1::Vector{T}, x2::Vector{T}, theta::T) where T
+        sqdist = sum((x1 .- x2).^2)
+        return exp(-sqdist / (2 * theta^2))
+    end
+
+    export square_exp()
+    
     function SGP()
         name = "SparseGaussianProcess"
         Z = nothing
@@ -84,5 +92,9 @@ function set_inducing_inputs!(sgp::SGP, Z::Union{Nothing, Matrix{Float64}}, norm
     end
 end
 
-end
+end # module
+
+# Export the functions
+export set_inducing_inputs()
+export SGP()            
 
