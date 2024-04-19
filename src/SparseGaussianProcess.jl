@@ -3,8 +3,6 @@ using LinearAlgebra
 using Random
 
 
-
-# Write your package code here
 mutable struct SGP <: AbstractSurrogateModel
     name: String
     Z::Union{Nothing, Matrix{Float64}}
@@ -85,14 +83,6 @@ function set_inducing_inputs!(sgp::SGP, Z::Union{Nothing, Matrix{Float64}}, norm
         sgp.nz = size(sgp.Z,1)
     end
 end
-
-
-
-
-
-# include("sample.jl")
-
-export my_f
 
 end
 
