@@ -2,7 +2,7 @@ using Test
 using SparseGaussianProcess  # Import the module
 using Random
 
-sgp = SGP()# Create an instance of the SGP clas
+sgp = SGP()# Create an instance of the SGP class
 @testset "SparseGaussianProcess.jl" begin
 
    # Test set_inducing_inputs! function
