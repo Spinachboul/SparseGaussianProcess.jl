@@ -7,9 +7,9 @@ abstract type AbstractSurrogateModel end
 mutable struct SGP <: AbstractSurrogateModel
     name::String
     Z::Union{Nothing, Matrix{Float64}}
-    woodbury_data::Dict{String,Union{Nothing,Vector{Float64}, Matrix{Float64}}}
-    optimal_par:: Dict{String, Union{Nothing, Vector{Float64}}}
-    optimal_noise:: Union{Nothing, Float64}
+    woodbury_data::Dict{String, Union{Nothing, Vector{Float64}, Matrix{Float64}}}
+    optimal_par::Dict{String, Union{Nothing, Vector{Float64}}}
+    optimal_noise::Union{Nothing, Float64}
     options::Dict{String, Any}
     supports::Dict{String, Bool}
     training_points::Dict{String, Any}
@@ -18,8 +18,7 @@ mutable struct SGP <: AbstractSurrogateModel
     nz::Int
     normalize::Bool
     is_continuous::Bool
-    _correlation_types::Dict{String,Function}
-
+    _correlation_types::Dict{String, Function}
 
     function SGP()
         name = "SparseGaussianProcess"
@@ -28,15 +27,16 @@ mutable struct SGP <: AbstractSurrogateModel
         optimal_par = Dict()
         optimal_noise = nothing
         options = Dict(
-            "corr" => "square_exp", # guassian kernel only
-            "poly" => "constant", # constant mean only
-            "theta_bounds" => [1e-6, 1e2], # Upper bound increased as compared to Kriging based one
-            "noise0" => [1e-2], # Gaussian noise on observed training data
-            "hyper_opt" => "Cobyla", # Optimizer for Hyper parameter optimization
-            "eval_noise" => true, # For SGP evaluate noise by default
-            "nugget" => 1000.0 * eps(Float64), # Slightly increased as compared to kriging based one
-            "method" => "FITC", # Method used by Sparse GP model
-            "n_inducing" => 10, # Number of inducing points
+            "corr" => "square_exp",
+            "poly" => "constant",
+            "theta_bounds" => [1e-6, 1e2],
+            "noise0" => [1e-2],
+            "hyper_opt" => "Cobyla",
+            "eval_noise" => true,
+            "nugget" => 1000.0 * eps(Float64),
+            "method" => "FITC",
+            "n_inducing" => 10,
+            "use_hetero_noise" => false  # Fixed the issue by removing spaces
         )
         supports = Dict(
             "derivatives" => false,
@@ -50,19 +50,19 @@ mutable struct SGP <: AbstractSurrogateModel
         nz = 0
         normalize = false
         is_continuous = true
-        _correlation_types = nothing
+        _correlation_types = Dict{String, Function}()
         new(name, Z, woodbury_data, optimal_par, optimal_noise, options, supports, training_points, nt, nx, nz, normalize, is_continuous, _correlation_types)
     end
 end
 
 function set_inducing_inputs!(sgp::SGP, Z::Union{Nothing, Matrix{Float64}}, normalize::Bool=false)
     if isnothing(Z)
-        sgp.Z = sgp.options["n_inducing"]
+        # Initialize sgp.Z with random training data
         X = sgp.training_points["X"]
-        random_idx = randperm(sgp.nt)[1:sgp.nz]
-        sgp,Z = X[random_idx,:]
+        random_idx = randperm(sgp.nt)[1:sgp.options["n_inducing"]]
+        sgp.Z = X[random_idx, :]
     else
-        if size(Z,2) != sgp.nx
+        if size(Z, 2) != sgp.nx
             throw(DimensionMismatch("DimensionError: Z.shape[2] != X.shape[2]"))
         end
         sgp.Z = copy(Z)
@@ -75,7 +75,7 @@ function set_inducing_inputs!(sgp::SGP, Z::Union{Nothing, Matrix{Float64}}, norm
         else
             sgp.normalize = false
         end
-        sgp.nz = size(sgp.Z,1)
+        sgp.nz = size(sgp.Z, 1)
     end
 end
 
