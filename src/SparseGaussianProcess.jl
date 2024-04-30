@@ -93,23 +93,23 @@ function _new_train!(sgp::SGP)
         throw(DimensionMismatch("DimensionError: Y.shape[2] != 1"))
     end
 
-    # Make sure the noise is not hetero
-    if sgp.options["use hetero noise"]
-        throw(NotImplementedError("ArgumentError: Heteroscedastic noise is not supported"))
-    end
+    # # Make sure the noise is not hetero
+    # if sgp.options["use hetero noise"]
+    #     throw(NotImplementedError("ArgumentError: Heteroscedastic noise is not supported"))
+    # end
 
-    # Make sure we are using continuous vatiables only
-    if !sgp.is_continuous
-        throw(NotImplementedError("SGP does not support mixed-Integer variables"))
-    end
+    # # Make sure we are using continuous vatiables only
+    # if !sgp.is_continuous
+    #     throw(NotImplementedError("SGP does not support mixed-Integer variables"))
+    # end
 
-    # Works only with COBYLA because of no likelihood gradients
-    if sgp.options["hyper_opt"] != "Cobyla"
-        throw(NotImplementedError("SGP works only with COBYLA internal optimizer"))
+    # # Works only with COBYLA because of no likelihood gradients
+    # if sgp.options["hyper_opt"] != "Cobyla"
+    #     throw(NotImplementedError("SGP works only with COBYLA internal optimizer"))
 
-    end
+    # end
 
-    return _new_train(sgp)
+    # return _new_train!(sgp)
 end
 
 
@@ -172,4 +172,5 @@ end
 
 
 # Export the functions
-    export SGP, set_inducing_inputs!, _new_train!, _reduced_likelihood
+export SGP, set_inducing_inputs!, _new_train!, _reduced_likelihood
+export _reduced_likelihood_gradient, _reduced_likelihood_hessian, _compute_K, _fitc
