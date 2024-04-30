@@ -9,7 +9,7 @@ println(sgp.Z)
 
 # Test set_inducing_inputs!
 @testset "set_inducing_inputs!" begin
-    X = rand(10,3)  # Example training data
+    X = rand(10,3) # Training Data
     SparseGaussianProcess.set_inducing_inputs!(sgp, X)
 
     @test !isnothing(sgp.Z)
