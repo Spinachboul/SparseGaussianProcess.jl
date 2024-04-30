@@ -20,7 +20,6 @@ mutable struct SGP <: AbstractSurrogateModel
     normalize::Bool
     is_continuous::Bool
     _correlation_types::Dict{String, Function}
-include("sample.jl")
 
     function SGP()
         name = "SparseGaussianProcess"
@@ -117,7 +116,6 @@ function _reduced_likelihood(sgp::SGP, theta::Vector{Float64}, noise::Float64)
     X = sgp.training_points["X"]
     Y = sgp.training_points["Y"]
     Z = sgp.Z
-export my_f
 
     if sgp.options["eval_noise"]
         sigma2 = theta[end-1]
