@@ -3,10 +3,11 @@ using LinearAlgebra
 using Random
 
 abstract type AbstractSurrogateModel end
+# Write your package code here.
 
 mutable struct SGP <: AbstractSurrogateModel
     name::String
-    Z::Union{Nothing, Matrix{Float64}}
+    Z::Matrix{Float64}    
     woodbury_data::Dict{String, Union{Nothing, Vector{Float64}, Matrix{Float64}}}
     optimal_par::Dict{String, Union{Nothing, Vector{Float64}}}
     optimal_noise::Union{Nothing, Float64}
@@ -20,9 +21,10 @@ mutable struct SGP <: AbstractSurrogateModel
     is_continuous::Bool
     _correlation_types::Dict{String, Function}
 
+
     function SGP()
         name = "SparseGaussianProcess"
-        Z = nothing
+        Z = rand(3,3)
         woodbury_data = Dict("vec" => nothing, "inv" => nothing)
         optimal_par = Dict()
         optimal_noise = nothing
@@ -55,16 +57,16 @@ mutable struct SGP <: AbstractSurrogateModel
     end
 end
 
-function set_inducing_inputs!(sgp::SGP, Z::Union{Nothing, Matrix{Float64}}, normalize::Bool=false)
+function set_inducing_inputs!(sgp::SGP, Z::Matrix{Float64}, normalize::Bool=false)
     if isnothing(Z)
         # Initialize sgp.Z with random training data
         X = sgp.training_points["X"]
         random_idx = randperm(sgp.nt)[1:sgp.options["n_inducing"]]
         sgp.Z = X[random_idx, :]
     else
-        if size(Z, 2) != sgp.nx
-            throw(DimensionMismatch("DimensionError: Z.shape[2] != X.shape[2]"))
-        end
+        # if size(Z, 2) != sgp.nx
+        #     throw(DimensionMismatch("DimensionError: Z.shape[2] != X.shape[2]"))
+        # end
         sgp.Z = copy(Z)
         if normalize
             X = sgp.training_points["X"]
@@ -166,7 +168,8 @@ function _fitc(sgp::SGP, X::Matrix{Float64}, Y::Matrix{Float64}, Z::Matrix{Float
     Kmm = _compute_K(sgp, Z, Z, theta, sigma2)
 end
 
-end  # Module
+end  
+
 
 # Export the functions
-export SGP, set_inducing_inputs!, _new_train!, _reduced_likelihood
+    export SGP, set_inducing_inputs!, _new_train!, _reduced_likelihood
