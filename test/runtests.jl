@@ -1,15 +1,29 @@
 using Test
 using SparseGaussianProcess
+using BenchmarkTools
 
-# Test SGP constructor
-sgp = SparseGaussianProcess.SGP()
 
-# Get the shape of the inducing inputs
-println(sgp.Z)
+# Function to benchmark the training of the SparseGaussianProcess model
+ function benchmark_training(n_samples::Int)
+    # Create a SparseGaussianProcess model
+    sgp = SparseGaussianProcess.SGP()
+    y = rand(100,1)
+    sgp.training_points["Y"] = y
+    sgp.options["use_hetero_noise"] = false
+
+    # Set the training data
+    SparseGaussianProcess._new_train!(sgp)
+
+end
+
+# Test the benchmark
+benchmark_training(1000)
+
 
 # Test set_inducing_inputs!
 @testset "set_inducing_inputs!" begin
-    X = rand(10,3) # Training Data
+    sgp = SparseGaussianProcess.SGP()
+    X = rand(10,3)  # Example training data
     SparseGaussianProcess.set_inducing_inputs!(sgp, X)
 
     @test !isnothing(sgp.Z)
