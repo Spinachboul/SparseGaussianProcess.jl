@@ -3,7 +3,6 @@ using LinearAlgebra
 using Random
 
 abstract type AbstractSurrogateModel end
-# Write your package code here.
 
 mutable struct SGP <: AbstractSurrogateModel
     name::String
