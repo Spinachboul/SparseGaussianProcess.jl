@@ -1,10 +1,15 @@
 using Test
-using SparseGaussianProcess  # Import your package module
+using SparseGaussianProcess
+
+# Test SGP constructor
+sgp = SparseGaussianProcess.SGP()
+
+# Get the shape of the inducing inputs
+println(sgp.Z)
 
 # Test set_inducing_inputs!
 @testset "set_inducing_inputs!" begin
-    sgp = SparseGaussianProcess.SGP()
-    X = rand(10,2)  # Example training data
+    X = rand(10,3)  # Example training data
     SparseGaussianProcess.set_inducing_inputs!(sgp, X)
 
     @test !isnothing(sgp.Z)
